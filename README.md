@@ -73,6 +73,7 @@ export FLASK_CONFIG=development
 # Another way of assigning environment variables is:
 FLASK_APP=run
 FLASK_CONFIG=development
+INFLUX_TOKEN=<Your influxdb token>
 
 # Read more at https://github.com/theskumar/python-dotenv
 ```
