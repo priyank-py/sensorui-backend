@@ -1,5 +1,7 @@
 from influxdb_client import InfluxDBClient
 import os
+from datetime import datetime
+import pytz
 
 def get_client():
     """ Load temp's data
@@ -17,3 +19,11 @@ def get_client():
     query_api = client.query_api()
 
     return query_api
+
+
+def get_datetime(str_date):
+    if str_date.isnumeric():
+        try:
+            return datetime.fromtimestamp(int(str_date) / 1000).astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        except: 
+            return ""

@@ -2,10 +2,9 @@ from flask_jwt_extended import jwt_required
 from flask_restx import Resource
 from flask import Flask, jsonify, request
 
-from .utils import get_client
+from .utils import get_client, get_datetime
 
 from .dto import GraphDto
-
 
 api = GraphDto.api
 
@@ -14,10 +13,13 @@ class Temperature(Resource):
 
     @jwt_required()
     def get(self):
+        start_date = get_datetime(request.args.get('startDate'))
+        end_date = get_datetime(request.args.get('endDate'))
+
         try:
-            query = '''
+            query = f'''
         from(bucket: "weather")
-        |> range(start: -5m)
+        |> range(start: {start_date}, stop: {end_date})
         |> filter(fn: (r) => r["_measurement"] == "temperature")
         |> filter(fn: (r) => r["_field"] == "value")
         |> filter(fn: (r) => r["source"] == "random")
@@ -30,7 +32,7 @@ class Temperature(Resource):
             return result
 
         except Exception as e:
-            return jsonify({"e": str(e)})
+            return jsonify({"e": str(e), "query": query})
 
 
 @api.route('/precipitation')
@@ -38,10 +40,13 @@ class Precipitation(Resource):
 
     @jwt_required()
     def get(self):
+        start_date = get_datetime(request.args.get('startDate'))
+        end_date = get_datetime(request.args.get('endDate'))
+
         try:
-            query = '''
+            query = f'''
         from(bucket: "weather")
-        |> range(start: -5m)
+        |> range(start: {start_date}, stop: {end_date})
         |> filter(fn: (r) => r["_measurement"] == "precipitation")
         |> filter(fn: (r) => r["_field"] == "value")
         |> filter(fn: (r) => r["source"] == "random")
@@ -54,7 +59,7 @@ class Precipitation(Resource):
             return result
 
         except Exception as e:
-            return jsonify({"e": str(e)})
+            return jsonify({"e": str(e), "query": query})
 
 
 @api.route('/humidity')
@@ -62,10 +67,13 @@ class Humidity(Resource):
     
     @jwt_required()
     def get(self):
+        start_date = get_datetime(request.args.get('startDate'))
+        end_date = get_datetime(request.args.get('endDate'))
+
         try:
-            query = '''
+            query = f'''
         from(bucket: "weather")
-        |> range(start: -5m)
+        |> range(start: {start_date}, stop: {end_date})
         |> filter(fn: (r) => r["_measurement"] == "humidity")
         |> filter(fn: (r) => r["_field"] == "value")
         |> filter(fn: (r) => r["source"] == "random")
@@ -78,7 +86,7 @@ class Humidity(Resource):
             return result
 
         except Exception as e:
-            return jsonify({"e": str(e)})
+            return jsonify({"e": str(e), "query": query})
         
 
 @api.route('/wind_speed')
@@ -86,10 +94,13 @@ class WindSpeed(Resource):
     
     @jwt_required()
     def get(self):
+        start_date = get_datetime(request.args.get('startDate'))
+        end_date = get_datetime(request.args.get('endDate'))
+
         try:
-            query = '''
+            query = f'''
         from(bucket: "weather")
-        |> range(start: -5m)
+        |> range(start: {start_date}, stop: {end_date})
         |> filter(fn: (r) => r["_measurement"] == "wind_speed")
         |> filter(fn: (r) => r["_field"] == "value")
         |> filter(fn: (r) => r["source"] == "random")
@@ -102,4 +113,4 @@ class WindSpeed(Resource):
             return result
 
         except Exception as e:
-            return jsonify({"e": str(e)})
+            return jsonify({"e": str(e), "query": query})
